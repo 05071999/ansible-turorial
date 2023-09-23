@@ -128,4 +128,24 @@ then Modify your Ansible playbook to use mysqlclient instead of MySQL-python. Up
         state: present
       when: mysqlclient_install_result is success
 
+*************************************************************************************************8
+Error 3: 
 
+>> might you will get another error <<
+
+fatal: [192.168.100.37]: FAILED! => {"changed": true, "cmd": ["mysql", "-u", "your_mysql_user", "-pYourPassword", "-e", "CREATE DATABASE IF NOT EXISTS accounts;"], "delta": "0:00:00.015502", "end": "2023-09-24 03:13:36.805076", "msg": "non-zero return code", "rc": 1, "start": "2023-09-24 03:13:36.789574", "stderr": "ERROR 1698 (28000): Access denied for user 'your_mysql_user'@'localhost'", "stderr_lines": ["ERROR 1698 (28000): Access denied for user 'your_mysql_user'@'localhost'"], "stdout": "", "stdout_lines": []}
+
+>> This error comes due unable to connect mysql with target socket file basically this error comes ansbile doesn't know how to connect server so that's why have to specyfy socket file path in playbook 
+
+like 
+
+- name Create MYSQL account
+  mysql_db: 
+    name: accounts
+    state: present
+    login_unix_socket: /var/lib/mysql/mysql.sock  # it's default path 
+
+
+>> Now save and run play book it would be resolved
+
+**************************************************************************************************8
