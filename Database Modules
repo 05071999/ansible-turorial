@@ -1,0 +1,11 @@
+>> Now i want to use a moduel to create a database acocunt 
+
+---
+- name: Database accoutn setup 
+  host: webserver
+  become: yes
+  tasks: 
+     -name: Create a new database with name 'account'
+      mysql_db:
+         name: accounts
+         state: present
