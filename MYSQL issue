@@ -1,0 +1,98 @@
+Might you wil get error using DB mudule 
+
+TASK [Create a new database with name 'accounts'] ****************************************************
+fatal: [192.168.100.37]: FAILED! => {"changed": false, "msg": "The PyMySQL (Python 2.7 and Python 3.X) or MySQL-python (Python 2.X) module is required."}
+
+PLAY RECAP *******************************************************************************************
+192.168.100.37             : ok=2    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0
+
+Cause : The error message "The PyMySQL (Python 2.7 and Python 3.X) or MySQL-python (Python 2.X) module is required." suggests that Ansible is expecting either PyMySQL or MySQL-python to be available, but neither is installed.
+
+To resolve this issue, you can specify the python3 interpreter explicitly in your playbook, ensuring that Ansible uses Python 3 when executing tasks. Additionally, you can use the ansible.builtin.mysql_db module instead of relying on MySQL-python or PyMySQL.
+
+
+Resolution : 
+---
+- name: Install mysqlclient and create a new database
+  hosts: webserver
+  become: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3.8  # Specify the path to Python 3.8 on your system
+
+  tasks:
+    - name: Install mysqlclient using pip3
+      ansible.builtin.pip:
+        name: mysqlclient
+      register: mysqlclient_install_result
+      ignore_errors: yes
+
+    - name: Create a new database with name 'accounts'
+      ansible.builtin.mysql_db:
+        name: accounts
+        state: present
+      when: mysqlclient_install_result is success
+
+Edit  the playbook and save it then run it would be fixed
+
+***************************************************************************************************
+Error 2:TASK [Install mysqlclient using pip3] ****************************************************************
+fatal: [192.168.100.37]: FAILED! => {"changed": false, "cmd": ["/usr/bin/pip3", "install", "mysqlclient"], "msg": "stdout: Collecting mysqlclient\n  Downloading https://files.pythonhosted.org/packages/50/5f/eac919b88b9df39bbe4a855f136d58f80d191cfea34a3dcf96bf5d8ace0a/mysqlclient-2.1.1.tar.gz (88kB)\n    Complete output from command python setup.py egg_info:\n    /bin/sh: 1: mysql_config: not found\n    /bin/sh: 1: mariadb_config: not found\n    /bin/sh: 1: mysql_config: not found\n    Traceback (most recent call last):\n      File \"<string>\", line 1, in <module>\n      File \"/tmp/pip-build-wos66_fa/mysqlclient/setup.py\", line 15, in <module>\n        metadata, options = get_config()\n      File \"/tmp/pip-build-wos66_fa/mysqlclient/setup_posix.py\", line 70, in get_config\n        libs = mysql_config(\"libs\")\n      File \"/tmp/pip-build-wos66_fa/mysqlclient/setup_posix.py\", line 31, in mysql_config\n        raise OSError(\"{} not found\".format(_mysql_config_path))\n    OSError: mysql_config not found\n    mysql_config --version\n    mariadb_config --version\n    mysql_config --libs\n    \n    ----------------------------------------\n\n:stderr: Command \"python setup.py egg_info\" failed with error code 1 in /tmp/pip-build-wos66_fa/mysqlclient/\n"}
+...ignoring
+
+Cause : 
+
+The error message you're encountering, OSError: mysql_config not found, indicates that the mysqlclient library requires the mysql_config executable to build and configure itself properly during installation. The mysql_config executable is typically provided by the MySQL development libraries.
+
+To resolve this issue, you need to install the MySQL development libraries on your target host, which include mysql_config. The exact package name may vary depending on your Linux distribution. Here are the commands to install the MySQL development libraries on common distributions:
+
+Here you go : 
+
+sudo apt-get update
+sudo apt-get install libmysqlclient-dev
+
+
+****************************************************************************************************
+
+Error 3 :
+TASK [Install MySQL-python using pip] ****************************************************************
+fatal: [192.168.100.37]: FAILED! => {"changed": false, "cmd": ["/usr/bin/pip3", "install", "MySQL-python"], "msg": "stdout: Collecting MySQL-python\n  Downloading https://files.pythonhosted.org/packages/a5/e9/51b544da85a36a68debe7a7091f068d802fc515a3a202652828c73453cad/MySQL-python-1.2.5.zip (108kB)\n    Complete output from command python setup.py egg_info:\n    Traceback (most recent call last):\n      File \"<string>\", line 1, in <module>\n      File \"/tmp/pip-build-69lcv0_7/MySQL-python/setup.py\", line 13, in <module>\n        from setup_posix import get_config\n      File \"/tmp/pip-build-69lcv0_7/MySQL-python/setup_posix.py\", line 2, in <module>\n        from ConfigParser import SafeConfigParser\n    ModuleNotFoundError: No module named 'ConfigParser'\n    \n    ----------------------------------------\n\n:stderr: Command \"python setup.py egg_info\" failed with error code 1 in /tmp/pip-build-69lcv0_7/MySQL-python/\n"}
+...ignoring
+
+TASK [Create a new database with name 'accounts'] ****************************************************
+skipping: [192.168.100.37]
+
+PLAY RECAP *******************************************************************************************
+192.168.100.37             : ok=2    changed=0    unreachable=0    failed=0    skipped=1    rescued=0    ignored=1   
+
+Cause :
+The error message you're encountering, ModuleNotFoundError: No module named 'ConfigParser', indicates that there's a compatibility issue with the MySQL-python library, which expects the ConfigParser module, which is typically available in Python 2 but not in Python 3.
+
+To work with Python 3, you should use the mysqlclient library instead of MySQL-python, as it's compatible with Python 3 and works as a drop-in replacement. Here's how you can update your playbook to use mysqlclient:
+
+    First, you need to ensure that the mysqlclient library is installed. You can use pip3 to install it on the target host:
+
+$ pip3 install mysqlclient
+
+then Modify your Ansible playbook to use mysqlclient instead of MySQL-python. Update your playbook as follows:
+
+---
+- name: Install mysqlclient and create a new database
+  hosts: webserver
+  become: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3.8  # Specify the path to Python 3.8 on your system
+
+  tasks:
+    - name: Install mysqlclient using pip3
+      ansible.builtin.pip:
+        name: mysqlclient
+      register: mysqlclient_install_result
+      ignore_errors: yes
+
+    - name: Create a new database with name 'accounts'
+      mysql_db:
+        name: accounts
+        state: present
+      when: mysqlclient_install_result is success
+
+
