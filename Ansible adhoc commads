@@ -58,3 +58,24 @@ Playbook are Written in YAMLE foormate
 
  #ansbile webserver -m apt -a "name=httpd state=absent"  --become
  ******************************************************************
+
+
+>> Now write another playbook file to copy file with owner and permission 
+
+     >> create another folder for the project 
+        $ mkdir project-1
+
+    >> crete playbook file 
+        $ sudo nano copy.yaml
+         #write playbook
+         ---
+         - name: copy file to remote host
+           hosts: webserver
+           become: yes
+           tasks: 
+              - name: copy index file
+                copy:
+                  src: index.html
+                  dest: /var/www/html/index.html 
+                  backup: yes            # incase if there would be file with same name then first it will take backup and then will copy the file 
+        
