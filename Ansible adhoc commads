@@ -82,5 +82,20 @@ ________________________________________________________________________________
 [!!!!IMPORTANT "while copy this playbook file might you will get incorect syntxt duo to unorgnize so make sure to take care of yaml syntax] 
 _____________________________________________________________________________________________________________________________________________
 
+>> Now i want to check application is installed or not on target hosts using playbook 
 
-        
+---
+- name: Check if MySQL is installed
+  hosts: your_target_host
+  become: yes  # This assumes you have sudo or root access on the target machine
+
+  tasks:
+    - name: Check if MySQL is installed
+      ansible.builtin.command: "mysql --version"
+      register: mysql_check
+      ignore_errors: yes
+
+    - name: Print result
+      ansible.builtin.debug:
+        var: mysql_check.rc
+
