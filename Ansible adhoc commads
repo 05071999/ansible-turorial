@@ -20,29 +20,33 @@ Playbook are Written in YAMLE foormate
 
        sudo nano webserver.yaml
         
-    ---   #its indicates to yaml
-    - name :Webserver setup #every item in list is a dictonry
-         hosts: webserver
-         become: yes
-         tasks:
-             -name: Install httpd
-              ansible.builtin.apt:
-                 name: httpd
-                 state: present
-            -name: start service
-             ansible.builtin.service:
-                name: httpd
-                state: started
-                enabled: yes
-            -name: Install mariadb-server
-             ansible.builtin.apt:
-                 name: mariadb-server
-                 state: present 
-            -name : Start mariadb service
-             ansbile.builtin.apt:
-                 name: mariadb
-                 state: started
-                 enabled: yes
+  [
+---
+- name: Webserver setup
+  hosts: webserver
+  become: yes
+  tasks:
+    - name: Install httpd
+      ansible.builtin.apt:
+        name: apache2  # Use "apache2" instead of "httpd" on most Linux distributions
+        state: present
+
+    - name: Start httpd service
+      ansible.builtin.service:
+        name: apache2
+        state: started
+        enabled: yes
+
+    - name: Install mariadb-server
+      ansible.builtin.apt:
+        name: mariadb-server
+        state: present
+
+    - name: Start mariadb service
+      ansible.builtin.service:
+        name: mysql
+        state: started
+        enabled: yes
 
             
 >>now save it and run playbook command 
