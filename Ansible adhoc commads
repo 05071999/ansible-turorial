@@ -78,4 +78,9 @@ Playbook are Written in YAMLE foormate
                   src: index.html
                   dest: /var/www/html/index.html 
                   backup: yes            # incase if there would be file with same name then first it will take backup and then will copy the file 
+___________________________________________________________________________________________________________________________________________
+[!!!!IMPORTANT "while copy this playbook file might you will get incorect syntxt duo to unorgnize so make sure to take care of yaml syntax] 
+_____________________________________________________________________________________________________________________________________________
+
+
         
