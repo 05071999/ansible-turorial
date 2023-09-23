@@ -11,7 +11,7 @@ Cause : The error message "The PyMySQL (Python 2.7 and Python 3.X) or MySQL-pyth
 To resolve this issue, you can specify the python3 interpreter explicitly in your playbook, ensuring that Ansible uses Python 3 when executing tasks. Additionally, you can use the ansible.builtin.mysql_db module instead of relying on MySQL-python or PyMySQL.
 
 
-Resolution : 
+Resolution 1 : 
 ---
 - name: Install mysqlclient and create a new database
   hosts: webserver
@@ -33,6 +33,39 @@ Resolution :
       when: mysqlclient_install_result is success
 
 Edit  the playbook and save it then run it would be fixed
+
+Resolution 2 :
+
+go to on host machine using ssh 
+
+run the command to find mysql python dependency 
+
+$ apt search python |grep -y mysql 
+
+if you lucky then it will show incase if it now showing then run pip command 
+
+now exit from host and open your playbook 
+
+---
+- name
+  hosts: webserver
+  become: yes
+  tasks:
+    - name: Install PYMYSQL 
+      ansible.builtin.apt:
+         name: python3-PyMySQL   # this is package name 
+         state: present
+    - name: Start mariaDB service
+    ansible.built.service:
+       name: mariadb
+       state: started
+       enabled: yes
+   - name: Create a new database with name 'accounts'
+     mysql_db:
+       name: accounts
+       state: present
+
+
 
 ***************************************************************************************************
 Error 2:TASK [Install mysqlclient using pip3] ****************************************************************
