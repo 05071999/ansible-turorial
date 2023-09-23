@@ -98,4 +98,32 @@ ________________________________________________________________________________
     - name: Print result
       ansible.builtin.debug:
         var: mysql_check.rc
+>> but the out put will not give the version of app, it will check install or not if install then it will give outpu ok 
+>> if you wnat to check version of application what version is installed then you have to use this module 
 
+---
+- name: Check if MySQL is installed
+  hosts: webserver
+  become: yes
+  tasks:
+    - name: Check if MySQL is installed
+      ansible.builtin.command: "mysql --version"
+      register: mysql_check
+      ignore_errors: yes
+
+    - name: Print MySQL version
+      debug:
+        var: mysql_version.stdout_lines
+      when: mysql_check.rc == 0
+
+    - name: Check if mariadb is installed
+      ansible.builtin.command: "mariadb --version"
+      register: mariadb_check
+      ignore_errors: yes
+
+
+    - name: Print MariaDB version
+      debug:
+        var: mariadb_version.stdout_lines
+      when: mariadb_check.rc == 0
+ 
