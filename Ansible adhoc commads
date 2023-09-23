@@ -1,0 +1,56 @@
+>>> to copy file 
+#ansible webserver -m ansible.builtin.copy -a "src=index.html dest=/var/www/html/index.html" -i hosts --become
+
+
+
+
+_________________---------------------------------------------------------------------------------------------------------
+
+Playbook are Written in YAMLE foormate
+
+-host: webserver
+ task:
+   -yum:
+       name: httpd
+       state:present
+
+>> Create a custome playbook 
+   >> Playbook name can be anything 
+   >> create a file in yaml formate as plabook support
+
+       sudo nano webserver.yaml
+        
+    ---   #its indicates to yaml
+    - name :Webserver setup #every item in list is a dictonry
+         hosts: webserver
+         become: yes
+         tasks:
+             -name: Install httpd
+              ansible.builtin.apt:
+                 name: httpd
+                 state: present
+            -name: start service
+             ansible.builtin.service:
+                name: httpd
+                state: started
+                enabled: yes
+            -name: Install mariadb-server
+             ansible.builtin.apt:
+                 name: mariadb-server
+                 state: present 
+            -name : Start mariadb service
+             ansbile.builtin.apt:
+                 name: mariadb
+                 state: started
+                 enabled: yes
+
+            
+>>now save it and run playbook command 
+
+ #ansible-playbok -i hosts webserver.yaml
+
+*******************************************************************
+ Note : let me remove httpd as i installed eariler 
+
+ #ansbile webserver -m apt -a "name=httpd state=absent"  --become
+ ******************************************************************
