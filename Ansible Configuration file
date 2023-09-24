@@ -1,0 +1,79 @@
+>> Ansible have default confifguration 
+>> Anible connecting linux machine using ssh on port 22 by default
+>> due to some security reason need to changes ssh port, so you have to change default ansible configuration 
+
+[Order of ansible config files]
+>> 
+  
+ System-Wide Configuration File:
+
+ Location: /etc/ansible/ansible.cfg (default) or as specified by the -C command-line option or the ANSIBLE_CONFIG environment variable.
+ Scope: System-wide, affecting all users on the system.
+ This configuration file is used to define global settings that apply to Ansible regardless of who is using it or from which directory it's run.
+ It is typically managed by system administrators and contains settings that are relevant to the entire Ansible installation on a system.
+ Changes made to this file will affect all users and Ansible executions on the system.
+
+
+ Directory-Specific Configuration File:
+
+ Location: ansible.cfg in the current directory where you run Ansible (if present).
+ Scope: Directory-specific, affecting only Ansible runs initiated from that directory.
+ This configuration file is intended for defining project-specific settings. When you run Ansible from a directory containing this file, the settings specified in this file will override any conflicting settings in global or user-specific configuration files.
+ It's useful when you want to customize Ansible's behavior for a specific project or play.
+
+ Use Cases for System-Wide Configuration (e.g., /etc/ansible/ansible.cfg):
+
+1. SSH Settings: Configure default SSH settings for all Ansible users. For example:
+
+[ssh_connection]
+ssh_args = -o ControlMaster=auto -o ControlPersist=60s
+
+
+>>This ensures that all Ansible runs on the system use these SSH options by default.
+
+2. Inventory Location: Set a standard location for the inventory file for consistency across all Ansible users and projects:
+
+[defaults]
+inventory = /etc/ansible/hosts
+
+>>This ensures that all Ansible playbooks run on the system use the same inventory file.
+
+3. Logging: Specify a central location for Ansible logs:
+
+[defaults]
+log_path = /var/log/ansible.log
+
+>> This ensures that all Ansible activity is logged to a consistent file.
+
+Use Cases for Directory-Specific Configuration (ansible.cfg in the project directory):
+
+1. Inventory Selection: If a project has a unique inventory structure, you can specify a custom inventory file for that project:
+
+ [defaults]
+inventory = inventory/my_project_hosts
+
+>> This allows you to use a different inventory file specific to your project without affecting other Ansible runs on the system.
+
+2. Remote User and Key: Customize the SSH user and key for a project:
+
+[defaults]
+remote_user = project_user
+private_key_file = ~/.ssh/project_key.pem
+
+>> This ensures that Ansible uses the specified user and private key when running playbooks for that project.
+
+3. Module Paths: If a project requires custom Ansible modules, you can set a module path specific to that project:
+
+[defaults]
+library = /path/to/project/modules
+
+>> This allows you to use custom modules for a particular project without affecting other Ansible projects.
+
+4. Playbook Defaults: Set defaults for playbooks within a project:
+
+[defaults] #[defaults]: This is a section header in the Ansible configuration file. Section headers are enclosed in square brackets ([]). In this case, [defaults] specifies that the following configuration settings apply to the "defaults" section of the configuration file.
+forks = 20 #forks: This key represents the maximum number of parallel processes or threads that Ansible can use when executing tasks in a playbook. In this case, it's set to 20, meaning Ansible can run up to 20 tasks concurrently. This can help speed up playbook execution when managing multiple hosts.
+gather_facts = no  #gather_facts: This key determines whether Ansible should collect system information (facts) from the remote hosts before running tasks. Facts include details like system hardware, network configuration, and more. Setting it to no means Ansible will skip the fact-gathering step.
+
+>> These settings affect all playbooks run within the project directory, ensuring consistency for that project.
+
