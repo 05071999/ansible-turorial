@@ -1,0 +1,29 @@
+_____Custom Configuration file 
+
+[defaults]
+host_key_checking=False #it will ignore Host key checking 
+inventory = /etc/myproject/customhosts  #this path can be anything 
+forks = 5
+log_path - /etc/myproject/ansible.log  #it will generate logs on this path, by default ansible not generate log
+
+[privilege_escaltion]
+become=True
+become_ask_pass=False  # this will not going to ask for becoming sudo while executing ansible palybook
+
+>> Now save 
+
+>> Now create a file where logs will generate and give permission for current user 
+
+go to directory 
+
+cd /etc/myproject/
+
+sudo touch ansible.log
+
+>> Now change the owner
+
+chown "username which want to give owner permission" file path
+
+example
+
+chown worker-1 /etc/myproject/ansible.log
